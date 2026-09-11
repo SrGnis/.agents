@@ -26,7 +26,6 @@ parsing and stores code chunks with semantic embeddings.
 | Tool | Purpose |
 |------|---------|
 | `qdrant-find` | Search for code by natural language description |
-| `qdrant-store` | Store information manually (read-only mode is default) |
 
 ---
 

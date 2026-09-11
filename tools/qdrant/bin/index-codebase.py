@@ -25,7 +25,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-STATE_DIR = Path.home() / ".agents" / "tools" / "qdrant" / "state"
+STATE_DIR = Path(os.environ.get("AGENTS_HOME", Path.home() / ".agents")) / "tools" / "qdrant" / "state"
 
 SUPPORTED_EXTENSIONS = {
     ".py": "python",

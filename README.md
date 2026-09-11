@@ -49,6 +49,13 @@ cat config.env
 
 `setup.sh` always symlinks `AGENTS.md` to `~/.config/opencode/AGENTS.md` so global agent rules are loaded by all OpenCode projects.
 
+### Environment
+
+| Variable | Default | Used by |
+|---|---|---|
+| `AGENTS_HOME` | `~/.agents` | Qdrant indexer state dir and git hooks — override if you keep this repo at a non-default path |
+| `XDG_CONFIG_HOME` | `~/.config` | OpenCode config location (used by harness adapters) |
+
 ### Prerequisites
 
 - Docker

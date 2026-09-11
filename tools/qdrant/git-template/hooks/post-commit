@@ -7,8 +7,9 @@ if [[ ! -f "${REPO_ROOT}/.qdrant-index" ]]; then
     exit 0
 fi
 
-INDEXER="$HOME/.agents/tools/qdrant/bin/index-codebase.py"
-PYTHON="$HOME/.agents/tools/qdrant/.venv/bin/python"
+AGENTS_HOME="${AGENTS_HOME:-$HOME/.agents}"
+INDEXER="$AGENTS_HOME/tools/qdrant/bin/index-codebase.py"
+PYTHON="$AGENTS_HOME/tools/qdrant/.venv/bin/python"
 
 [[ -x "$PYTHON" && -f "$INDEXER" ]] || exit 0
 
@@ -16,7 +17,7 @@ MAIN_REPO=$(git worktree list --porcelain 2>/dev/null | head -1 | sed 's/^worktr
 [[ -n "$MAIN_REPO" ]] || MAIN_REPO="$REPO_ROOT"
 
 PROJECT_KEY=$($PYTHON "$INDEXER" --resolve-identity "$MAIN_REPO" 2>/dev/null) || exit 0
-STATE_DIR="$HOME/.agents/tools/qdrant/state"
+STATE_DIR="$AGENTS_HOME/tools/qdrant/state"
 mkdir -p "$STATE_DIR"
 LOCKFILE="${STATE_DIR}/${PROJECT_KEY}.lock"
 

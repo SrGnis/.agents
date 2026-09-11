@@ -14,3 +14,4 @@ services:
     environment:
       - MCP_HTTP_HOST=0.0.0.0
       - CRAWL4AI_API_TOKEN=${CRAWL4AI_API_TOKEN:-}
+    env_file: ./.env

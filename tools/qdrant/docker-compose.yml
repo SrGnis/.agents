@@ -11,6 +11,7 @@ services:
     ports:
       - ${QDRANT_HOST:+${QDRANT_HOST}:}${QDRANT_PORT:-6333}:${QDRANT_PORT:-6333}
       - ${QDRANT_HOST:+${QDRANT_HOST}:}${QDRANT_GRPC_PORT:-6334}:${QDRANT_GRPC_PORT:-6334}
+    env_file: ./.env
     volumes:
       - qdrant-data:/qdrant/storage
 

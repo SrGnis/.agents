@@ -24,6 +24,7 @@ remove_harness_integrations() {
 }
 
 disable_crawl4ai() {
+    [[ -f "${TOOL_DIR}/.env" ]] || { log_info "No .env found, nothing to uninstall"; return 0; }
     source "${TOOL_DIR}/.env"
     remove_harness_integrations
 
