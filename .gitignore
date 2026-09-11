@@ -1,0 +1,16 @@
+tools/*/.env
+!tools/*/.env.example
+
+tools/qdrant/.venv/
+tools/qdrant/state/
+tools/qdrant/bin/__pycache__/
+__pycache__/
+*.pyc
+.qdrant-index
+
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/

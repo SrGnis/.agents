@@ -1,0 +1,18 @@
+# Qdrant vector database
+# https://qdrant.tech/documentation/quickstart/
+
+name: qdrant
+
+services:
+  qdrant:
+    container_name: qdrant
+    image: qdrant/qdrant:${QDRANT_VERSION:-latest}
+    restart: unless-stopped
+    ports:
+      - ${QDRANT_HOST:+${QDRANT_HOST}:}${QDRANT_PORT:-6333}:${QDRANT_PORT:-6333}
+      - ${QDRANT_HOST:+${QDRANT_HOST}:}${QDRANT_GRPC_PORT:-6334}:${QDRANT_GRPC_PORT:-6334}
+    volumes:
+      - qdrant-data:/qdrant/storage
+
+volumes:
+  qdrant-data:

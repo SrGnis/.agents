@@ -1,0 +1,16 @@
+# Crawl4AI Docker deployment
+# https://docs.crawl4ai.com/core/self-hosting/
+
+name: crawl4ai
+
+services:
+  crawl4ai:
+    container_name: crawl4ai
+    image: unclecode/crawl4ai:${CRAWL4AI_VERSION:-latest}
+    restart: unless-stopped
+    ports:
+      - ${CRAWL4AI_PORT:-11235}:${CRAWL4AI_PORT:-11235}
+    shm_size: 1g
+    environment:
+      - MCP_HTTP_HOST=0.0.0.0
+      - CRAWL4AI_API_TOKEN=${CRAWL4AI_API_TOKEN:-}

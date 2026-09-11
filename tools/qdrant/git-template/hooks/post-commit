@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+
+if [[ ! -f "${REPO_ROOT}/.qdrant-index" ]]; then
+    exit 0
+fi
+
+INDEXER="$HOME/.agents/tools/qdrant/bin/index-codebase.py"
+PYTHON="$HOME/.agents/tools/qdrant/.venv/bin/python"
+
+[[ -x "$PYTHON" && -f "$INDEXER" ]] || exit 0
+
+MAIN_REPO=$(git worktree list --porcelain 2>/dev/null | head -1 | sed 's/^worktree //')
+[[ -n "$MAIN_REPO" ]] || MAIN_REPO="$REPO_ROOT"
+
+PROJECT_KEY=$($PYTHON "$INDEXER" --resolve-identity "$MAIN_REPO" 2>/dev/null) || exit 0
+STATE_DIR="$HOME/.agents/tools/qdrant/state"
+mkdir -p "$STATE_DIR"
+LOCKFILE="${STATE_DIR}/${PROJECT_KEY}.lock"
+
+exec 200>"$LOCKFILE"
+flock -n 200 || exit 0
+
+CHANGED=$(git diff-tree --no-commit-id -M --name-status -r HEAD 2>/dev/null)
+if [[ -n "$CHANGED" ]]; then
+    nohup $PYTHON "$INDEXER" "$REPO_ROOT" --diff "$CHANGED" &>/dev/null &
+fi

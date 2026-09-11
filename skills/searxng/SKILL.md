@@ -1,0 +1,1 @@
+/home/srgnis/.agents/tools/searxng/SKILL.md
