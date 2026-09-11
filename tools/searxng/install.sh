@@ -94,9 +94,25 @@ ensure_env() {
     fi
 }
 
+ensure_settings() {
+    local settings="${TOOL_DIR}/core-config/settings.yml"
+    if [[ ! -f "${settings}" ]]; then
+        log_info "Creating core-config/settings.yml from .example"
+        cp "${settings}.example" "${settings}"
+    fi
+
+    if grep -qF '6JFiSWym4LzVU2ya7NJNa7puKYrk' "${settings}"; then
+        local key
+        key="$(openssl rand -hex 16)"
+        sed -i "s|secret_key: \".*\"|secret_key: \"${key}\"|" "${settings}"
+        log_success "Generated SearXNG secret_key"
+    fi
+}
+
 enable_searxng() {
     check_deps
     ensure_env
+    ensure_settings
     source "${TOOL_DIR}/.env"
 
     log_info "Starting SearXNG containers..."

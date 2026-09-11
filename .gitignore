@@ -1,5 +1,7 @@
 tools/*/.env
 !tools/*/.env.example
+tools/searxng/core-config/settings.yml
+!tools/searxng/core-config/settings.yml.example
 
 tools/qdrant/.venv/
 tools/qdrant/state/
