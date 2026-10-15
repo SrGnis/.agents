@@ -29,12 +29,12 @@ agent: build
 
 5. Write per-project opencode MCP config. Read existing `.opencode/opencode.json` first and merge (don't overwrite other tool configs):
    ```bash
-   python ~/.agents/tools/qdrant/bin/index-codebase.py --write-config "$(git rev-parse --show-toplevel)"
+   ~/.agents/tools/qdrant/.venv/bin/python ~/.agents/tools/qdrant/bin/index-codebase.py --write-config "$(git rev-parse --show-toplevel)"
    ```
 
 6. Run the indexer:
    ```bash
-   python ~/.agents/tools/qdrant/bin/index-codebase.py "$(git rev-parse --show-toplevel)" $ARGUMENTS
+   ~/.agents/tools/qdrant/.venv/bin/python ~/.agents/tools/qdrant/bin/index-codebase.py "$(git rev-parse --show-toplevel)" $ARGUMENTS
    ```
    If user passed `--reindex`, add that flag. Otherwise do incremental.
 

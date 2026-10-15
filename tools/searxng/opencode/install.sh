@@ -13,7 +13,7 @@ fi
 source "${TOOL_DIR}/.env"
 mkdir -p "${CONFIG_DIR}"
 
-node - "${CONFIG_FILE}" "http://localhost:${SEARXNG_PORT:-8888}" <<'NODE'
+node - "${CONFIG_FILE}" "http://localhost:${SEARXNG_PORT:-8080}" <<'NODE'
 const fs = require("fs");
 const [configFile, searxngUrl] = process.argv.slice(2);
 const entry = {

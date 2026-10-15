@@ -1,0 +1,8 @@
+[botdetection.ip_limit]
+# disable IP-based rate limiting for local use
+link_token = false
+
+[botdetection.ip_lists]
+# no block/allow lists
+block_ip = []
+pass_ip = ["127.0.0.0/8", "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]

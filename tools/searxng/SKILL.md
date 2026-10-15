@@ -69,7 +69,6 @@ pagination, and URL reading.
 ```json
 {
   "query": "WebAssembly in production",
-  "categories": "it",
   "language": "en",
   "time_range": "month",
   "num_results": 10
@@ -147,7 +146,7 @@ or if a search fails due to an unsupported category.
 ## Tips
 
 - Prefer **specific queries** over vague ones: `"Python asyncio vs trio performance 2024"` beats `"async python"`.
-- For **technical topics**, add `categories: "it"` to focus results.
+- **Avoid `categories: "it"` for general searches** — it excludes Google/Bing/DuckDuckGo and only searches package registries, code hosting, and Docker Hub. Use it only when you specifically want npm/pypi/packagist results. For general library/framework searches, omit the category filter.
 - For **current events**, use `time_range: "week"` or `"day"` with `categories: "news"`.
 - If a search returns poor results, try **rephrasing** or calling `searxng_search_suggestions`.
 - When reading a URL, if content is truncated, increment `page` to get the rest.
@@ -163,4 +162,3 @@ or if a search fails due to an unsupported category.
 | Category not found | Call `searxng_instance_info` to check supported categories |
 | URL fetch fails | Try a different result from the search; note the failure to the user |
 | JSON parse error | The instance may not have JSON format enabled — ask the user to verify `settings.yml` |
-```

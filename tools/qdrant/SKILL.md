@@ -72,10 +72,10 @@ The query should describe **what** the code does, not how it's written.
 
 ## Workflow
 
-1. Formulate a natural language query describing what you're looking for
+1. **ALWAYS start with `qdrant-find`** — formulate a natural language query describing what you're looking for
 2. Call `qdrant-find` with the query
 3. Review results — each includes file path, line numbers, and code snippet
-4. Use `read` to examine the full context if needed
+4. Use `grep` and `read` to expand on what Qdrant found
 
 ---
 

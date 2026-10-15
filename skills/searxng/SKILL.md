@@ -1,1 +1,1 @@
-/home/srgnis/.agents/tools/searxng/SKILL.md
+/home/gmrtnz/.agents/tools/searxng/SKILL.md

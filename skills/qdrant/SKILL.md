@@ -1,1 +1,1 @@
-/home/srgnis/.agents/tools/qdrant/SKILL.md
+/home/gmrtnz/.agents/tools/qdrant/SKILL.md

@@ -30,9 +30,11 @@ Rules that apply to all agents and all projects.
 
 ## Tool Usage
 
+Quick index — per-tool details live in the corresponding skill (loaded on demand).
+
 ### Web Search: SearXNG (preferred)
 
-Use SearXNG as the primary tool for web search and URL reading.
+Use SearXNG as the primary tool for web search and URL reading. See the `searxng` skill.
 
 | Tool | When to use |
 |------|-------------|
@@ -41,16 +43,18 @@ Use SearXNG as the primary tool for web search and URL reading.
 | `searxng_search_suggestions` | Refining vague or partial queries before searching |
 | `searxng_instance_info` | Checking available categories/engines if a search fails |
 
-**Tips:**
-- Use specific queries: `"Python asyncio vs trio 2024"` beats `"async python"`.
-- Filter by category for tech topics: `categories: "it"`.
-- Use `time_range` for recent results: `"day"`, `"week"`, `"month"`.
-- Always summarize findings — never paste large raw search output.
-- Respect copyright: paraphrase, don't reproduce verbatim excerpts.
+Avoid `categories: "it"` except for package-registry searches — it excludes general search engines.
+
+| SearXNG excels at | SearXNG struggles with |
+|-------------------|------------------------|
+| Fresh 2026 blog content | Official documentation (kubernetes.io, pkg.go.dev) |
+| Privacy (self-hosted, no tracking) | GitHub repos and code search |
+| Speed (Valkey cache) | Rate limits on heavy usage |
+| Tech guides and tutorials | Source diversity |
 
 ### Web Scraping: Crawl4AI (fallback)
 
-Use Crawl4AI when SearXNG fails or for advanced web tasks.
+Use Crawl4AI when SearXNG fails or for advanced web tasks. See the `crawl4ai` skill.
 
 | Tool | When to use |
 |------|-------------|
@@ -61,19 +65,15 @@ Use Crawl4AI when SearXNG fails or for advanced web tasks.
 | `html` | Raw HTML is needed |
 | `crawl` | Full crawl with advanced options (wait selectors, timeouts) |
 
-**Tips:**
-- Crawl4AI renders JavaScript — use it for SPAs and dynamic content.
-- Use `wait_for` with a CSS selector to wait for elements to load.
-- It handles anti-bot protection (Cloudflare, etc.) via real browser.
-- For clean results, use `md`. For raw data, use `html` or `execute_js`.
+### Web workflow
 
-### Workflow
-
-1. **Search** → Use `searxng_web_search`
-2. **Read a URL** → Use `web_url_read`
-3. **If URL fails** (empty, blocked, JS-required) → Use `md` from Crawl4AI
-4. **Screenshots/PDFs** → Use Crawl4AI `screenshot` or `pdf` directly
-5. **Dynamic content** → Use Crawl4AI `md` with `wait_for` selector
+1. **Search** → `searxng_web_search`
+2. **Read a URL** → `web_url_read`
+3. **SearXNG 429, or results lack official docs/GitHub** → `websearch`
+4. **URL empty/blocked/JS-required** → Crawl4AI `md`
+5. **Screenshots/PDFs** → Crawl4AI `screenshot` or `pdf`
+6. **Dynamic content** → Crawl4AI `md` with `wait_for` selector
+7. **Always** summarize in your own words — no raw dumps, no verbatim excerpts.
 
 ### Architecture Documentation: arc42
 
@@ -87,39 +87,14 @@ Use when the user wants to create or review architecture documentation following
 
 ### Code Indexing: Qdrant
 
-Semantic search over codebases using vector embeddings and tree-sitter parsing.
+Semantic search over codebases using vector embeddings and tree-sitter parsing. See the `qdrant` skill.
+
+**IMPORTANT:** Always use the venv Python for Qdrant tools — never the system Python:
+```bash
+~/.agents/tools/qdrant/.venv/bin/python ~/.agents/tools/qdrant/bin/index-codebase.py ...
+```
 
 | Tool | When to use |
 |------|-------------|
-| `qdrant-find` | Searching for code by natural language description |
+| `qdrant-find` | Open-ended code search by functionality — try first, then `grep` |
 | `/index` | Index/re-index the codebase or install git hooks |
-
-**How it works:**
-- Git hooks (`post-commit`, `post-checkout`) automatically index changed files
-- Each branch is indexed separately — search results reflect the current branch
-- Git blob hashes prevent duplicate entries across branches
-- Uses tree-sitter for AST-aware code parsing (functions, classes, methods)
-
-**When to use Qdrant vs grep:**
-
-| Scenario | Best tool |
-|----------|-----------|
-| "How does X work?" (open-ended) | `qdrant-find` first, then `grep` for details |
-| "Where is function `foo` defined?" | `grep` |
-| "Find code that does Y" (no exact name) | `qdrant-find` |
-| "Which files import Z?" | `grep` |
-| Exploring an unfamiliar codebase | `qdrant-find` for overview |
-
-**Workflow for exploring features:**
-1. Start with `qdrant-find` using a natural language query about the feature
-2. Review returned snippets to identify key files and function names
-3. Use `grep` to find related scopes, helpers, or exact locations
-4. Use `read` to get full context of specific files
-
-**Tips:**
-- Use natural language: "how is authentication implemented" not "auth function"
-- Describe what code does, not how it's written
-- Run `/index` after cloning a repo to install hooks and do initial index
-- The index is per-branch — switch branches and search context changes
-- Code is indexed on commit — uncommitted changes may not appear
-- Qdrant results include file paths and line numbers — use them to navigate directly
