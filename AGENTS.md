@@ -61,9 +61,9 @@ Use Crawl4AI when SearXNG fails or for advanced web tasks. See the `crawl4ai` sk
 | `md` | SearXNG returned empty/blocked content, or page requires JavaScript |
 | `screenshot` | User wants a screenshot of a page |
 | `pdf` | User wants a PDF capture of a page |
-| `execute_js` | Extracting data that CSS selectors can't reach |
 | `html` | Raw HTML is needed |
-| `crawl` | Full crawl with advanced options (wait selectors, timeouts) |
+| `crawl` | Full crawl with browser/crawler tuning (wait selectors, timeouts, stealth) |
+| `execute_js` | Disabled by default — `crawler_config.js_code` is blocklisted too; use `md` `f: "raw"` + parse |
 
 ### Web workflow
 
@@ -72,7 +72,7 @@ Use Crawl4AI when SearXNG fails or for advanced web tasks. See the `crawl4ai` sk
 3. **SearXNG 429, or results lack official docs/GitHub** → `websearch`
 4. **URL empty/blocked/JS-required** → Crawl4AI `md`
 5. **Screenshots/PDFs** → Crawl4AI `screenshot` or `pdf`
-6. **Dynamic content** → Crawl4AI `md` with `wait_for` selector
+6. **Dynamic content** → Crawl4AI `crawl` with `crawler_config.wait_for`
 7. **Always** summarize in your own words — no raw dumps, no verbatim excerpts.
 
 ### Architecture Documentation: arc42
