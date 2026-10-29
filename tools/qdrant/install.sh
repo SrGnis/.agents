@@ -136,7 +136,7 @@ enable_qdrant() {
     configure_harnesses
 
     mkdir -p "${SKILLS_DIR}/qdrant"
-    ln -sf "${TOOL_DIR}/SKILL.md" "${SKILLS_DIR}/qdrant/SKILL.md"
+    ln -sfn "../../tools/qdrant/SKILL.md" "${SKILLS_DIR}/qdrant/SKILL.md"
     log_success "Skill symlink created"
 
     log_success "Qdrant installed. Run /index in a repo to enable code indexing."

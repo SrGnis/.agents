@@ -128,7 +128,7 @@ enable_searxng() {
     configure_harnesses
 
     mkdir -p "${SKILLS_DIR}/searxng"
-    ln -sf "${TOOL_DIR}/SKILL.md" "${SKILLS_DIR}/searxng/SKILL.md"
+    ln -sfn "../../tools/searxng/SKILL.md" "${SKILLS_DIR}/searxng/SKILL.md"
     log_success "Skill symlink created"
 }
 

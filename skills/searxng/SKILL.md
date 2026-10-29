@@ -1,1 +1,1 @@
-/home/srgnis/.agents/tools/searxng/SKILL.md
+../../tools/searxng/SKILL.md

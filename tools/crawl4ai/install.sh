@@ -123,7 +123,7 @@ enable_crawl4ai() {
     configure_harnesses
 
     mkdir -p "${SKILLS_DIR}/crawl4ai"
-    ln -sf "${TOOL_DIR}/SKILL.md" "${SKILLS_DIR}/crawl4ai/SKILL.md"
+    ln -sfn "../../tools/crawl4ai/SKILL.md" "${SKILLS_DIR}/crawl4ai/SKILL.md"
     log_success "Skill symlink created"
 }
 

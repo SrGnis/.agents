@@ -1,1 +1,1 @@
-/home/srgnis/.agents/tools/qdrant/SKILL.md
+../../tools/qdrant/SKILL.md

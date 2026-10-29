@@ -1,1 +1,1 @@
-/home/srgnis/.agents/tools/crawl4ai/SKILL.md
+../../tools/crawl4ai/SKILL.md
