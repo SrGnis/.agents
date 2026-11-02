@@ -17,7 +17,7 @@ link_agents_md() {
 
     if [[ -L "${target}" ]]; then
         local current
-        current="$(readlink -f "${target}")"
+        current="$(readlink -f "${target}" 2>/dev/null || true)"
         if [[ "${current}" == "${source}" ]]; then
             log_info "AGENTS.md symlink already in place"
             return 0
@@ -69,7 +69,7 @@ link_command() {
     local target="${cmd_dir}/${cmd}.md"
     if [[ -L "${target}" ]]; then
         local current
-        current="$(readlink -f "${target}")"
+        current="$(readlink -f "${target}" 2>/dev/null || true)"
         if [[ "${current}" == "${source}" ]]; then
             log_info "Command '${cmd}' symlink already in place"
             return 0
@@ -100,7 +100,7 @@ link_agents() {
 
         if [[ -L "${target}" ]]; then
             local current
-            current="$(readlink -f "${target}")"
+            current="$(readlink -f "${target}" 2>/dev/null || true)"
             if [[ "${current}" == "${agent_file}" ]]; then
                 log_info "Agent '${name}' symlink already in place"
                 continue
