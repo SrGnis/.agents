@@ -48,6 +48,15 @@ ipa service-add HTTP/name.example.com        # → HTTP/name.example.com
 `host-add` refuses `--ip-address` when DNS already owns that address; the host
 object only needs to exist as a principal container, so omit the address.
 
+`service-add` has its own gate: the name must resolve first.
+
+```
+ipa: ERROR: Host 'name.example.com' does not have corresponding DNS A/AAAA record
+```
+
+Add the A record before creating the service — `--force` on `host-add` does
+not cover this.
+
 For an **alias** name that a host will serve (e.g. `sso.example.com` on
 `sso01`), the host also needs permission to request for it:
 

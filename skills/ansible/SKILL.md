@@ -60,6 +60,31 @@ idempotent in effect (`update-ca-trust`, `sysctl -p`, `firewall-cmd --reload`,
 If `ansible-lint` flags `no-handler` on a task gated by `is changed`, resolve
 it the same way rather than converting to a handler.
 
+## Become is misleading
+
+A group var `ansible_become: true` **beats** the task keyword `become: false`:
+the task silently runs as root and writes root-owned files into user homes.
+For user-context work use `become: true` + `become_user:` — besides being
+explicit, sudo re-initializes the target's groups, so a membership added
+moments earlier (e.g. `docker`) applies in the same play.
+
+## Modules that are not what they look like
+
+- `copy`/`template` do **not** create missing parent directories — create them
+  explicitly or the task fails on a fresh box.
+- `known_hosts` + `ssh-keyscan`: the scan prints trailing `# banner` comment
+  lines that the module happily appends **every run**. Filter to the key line
+  (`select('search', 'ssh-ed25519') | first`); non-standard ports need
+  `name: "[host]:port"` and a key line the module can rewrite to match.
+  `lookup('pipe', ...)` runs on the controller, not the target.
+- A unit with an unmet `Condition*` (e.g. chrony's `ConditionCapability` in an
+  LXC guest) is *skipped*, so `state: started` reports `changed` forever.
+  Gate the task with a data flag instead of fighting the condition.
+- Not every `ansible.builtin.*` you remember is core: `filesystem` and `mount`
+  live in community collections. In a dependency-free repo fall back to
+  `blkid`/`mkfs` query-then-add, `lineinfile` for fstab, and an unconditional
+  `mount -a`.
+
 ## Secrets
 
 - `no_log: true` on anything carrying a password or bearer token. `uri` and
@@ -71,6 +96,11 @@ it the same way rather than converting to a handler.
   cost hours of debugging.
 - `ansible-vault view` and `ansible-inventory --host` **decrypt** values. Never
   print their output.
+- Keep `vault.yml` **whole-file** encrypted (`ansible-vault encrypt`).
+  `encrypt_string` emits inline `!vault` YAML that `ansible-vault view` then
+  refuses to read. To edit a vault without exposing it: `view > tmp` (a file,
+  not output), change it, `encrypt --output vault.yml tmp`, `shred tmp`.
+  Diagnose secret problems by length and character class only, never by value.
 
 ## Cross-host tasks
 
@@ -95,6 +125,25 @@ must any `slurp` of its output, otherwise the read happens on the wrong host.
   and crash. Hoist the expression into `set_fact`.
 - Free-form `command:` word-splits on spaces. Use `argv:` whenever an argument
   contains a space, or the value silently becomes several arguments.
+- Module args like `chdir`, `stdin`, `creates` belong under the module key or
+  `args:` — at task level ansible-lint reports "conflicting action statements".
+- `select('match', pat)` anchors at the **start** of the string (it is
+  `re.match`); use `select('search', pat)` for a substring.
+
+## CLI tool state
+
+Tools that manage their own credentials must write them themselves. A
+hand-written config file can authenticate differently than the tool's own
+login flow — glab in a hand-rolled `config.yml` sent `Basic oauth2:<token>`,
+which GitLab 19 rejects, while `glab auth login --stdin` stores the token in
+the shape the tool serves correctly. Feed the token with `stdin:` under
+`args:`, guard with query-then-add on `auth status`, and run the tool with
+`chdir` set to a directory the user can read.
+
+For third-party releases pinned as data, probe the installed version
+(`when: pinned_version not in probe.stdout`) rather than reinstalling every
+run — `apt` happily leaves an upstream `.deb` newer than the distro candidate
+in place.
 
 ## Style
 
@@ -112,5 +161,8 @@ must any `slurp` of its output, otherwise the read happens on the wrong host.
 2. the playbook runs twice — second run `changed=0`
 3. an **observable** check, not just "the task reported ok" — a real DNS query,
    a certificate read back, a service responding, an authentication attempt
+
+Beware pipeline masks in those checks: `cmd | tail; echo $?` reports `tail`'s
+status, so a failing step upstream looks green. Capture the command's own rc.
 
 If something half works, say so explicitly rather than reporting success.
