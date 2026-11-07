@@ -20,6 +20,13 @@ Rules that apply to all agents and all projects.
 
 - After making code changes, run lint and typecheck commands if available (e.g., `npm run lint`, `npm run typecheck`, `ruff`).
 - If you don't know the command, ask the user. Suggest adding it to `AGENTS.md` for future reference.
+- **Instrument before you fix what you cannot reproduce.** If a bug report is layout-, environment-, hardware- or machine-specific, add a trace at the pipeline boundary and get one run of it. Do not guess twice. If the trace contradicts your theory, the trace is right.
+- **A test can assert the bug.** Before changing a formula, a wire format, or a default, grep the test tree for the value you are about to change. A golden written from a passing run certifies the defect and keeps it alive through every green suite.
+- **Prove a new test can fail.** Revert the fix and watch it go red before trusting it. A test that passes both ways is vacuous and will be cited as coverage later. Harvest expected values by temporarily failing with the actual value, never from a passing run's internals.
+- **Verify what landed before claiming it.** Check `git status` and `git diff --stat` before writing a commit message. A green local build says nothing about commit completeness — the files are still on disk — and a silently failing edit makes the message a lie.
+- **Scripted edits silently no-op; verify each one landed.** Multi-line `sed` patterns match nothing across line breaks, and a no-op `sed`/`str_replace` exits zero — the edit looks done and the bug "fixes" nothing. Use the edit tool or a python script with exact strings for anything beyond one line, then grep the result before moving on. (Cost three debugging rounds in one session.)
+- **Fetch the tagged source before reverse-engineering third-party internals.** Decompiling a jar or reading bytecode traces is a last resort: `https://raw.githubusercontent.com/<org>/<repo>/<tag>/<path>` answers the question in one read. An hour of bytecode forensics dissolved into one file fetch when the habit was applied.
+- **A surviving mutation means the test is wrong, not the mutation.** When a mutation fails to turn a test red, the test is vacuous — stale object copies captured before the action, index-based assertions that coincide with the expected order, goldens with self-perpetuating arithmetic. Fix the test until every mutation bites, and write assertions against identity/labels rather than list indices.
 
 ## Git
 
