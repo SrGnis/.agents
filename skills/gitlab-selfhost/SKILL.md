@@ -1,5 +1,5 @@
 ---
-name: gitlab
+name: gitlab-selfhost
 description: >
   GitLab and GitLab Runner patterns for self-managed instances — omnibus in
   Docker, token/API authentication, OIDC sign-in against Keycloak, runner

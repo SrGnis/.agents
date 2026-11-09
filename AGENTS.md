@@ -85,6 +85,13 @@ arc42 skills are available for documenting software architecture:
 
 Use when the user wants to create or review architecture documentation following the arc42 template.
 
+### GitLab: glab CLI
+
+When a task touches GitLab (MRs, issues, CI/CD, releases, packages, API), use
+the `glab` CLI — see the `glab` skill first and prefer it over raw API calls.
+`glab-stack` covers stacked merge requests; `gitlab-selfhost` covers
+self-hosted instance and runner patterns.
+
 ### Code Indexing: Qdrant
 
 Semantic search over codebases using vector embeddings and tree-sitter parsing. See the `qdrant` skill.
