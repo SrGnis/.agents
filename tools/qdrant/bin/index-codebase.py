@@ -19,6 +19,7 @@ import fcntl
 import hashlib
 import json
 import os
+import pickle
 import re
 import subprocess
 import sys
@@ -278,6 +279,41 @@ def get_signature(node, source: bytes) -> str:
 
 
 def parse_file(filepath: str, language: str) -> list[dict]:
+    """Parse a file with tree-sitter and extract code chunks.
+
+    Grammar parsers are native code that can abort the process on malformed
+    input (SIGABRT is not catchable in-process). Markdown parses run in a
+    forked child so a crashing file is skipped instead of killing the run.
+    """
+    if language != "markdown":
+        return _parse_file_unsafe(filepath, language)
+
+    r_fd, w_fd = os.pipe()
+    pid = os.fork()
+    if pid == 0:
+        try:
+            os.close(r_fd)
+            with os.fdopen(w_fd, "wb") as w:
+                w.write(pickle.dumps(_parse_file_unsafe(filepath, language)))
+        except BaseException:
+            pass
+        os._exit(0)
+
+    os.close(w_fd)
+    with os.fdopen(r_fd, "rb") as r:
+        data = r.read()
+    _, status = os.waitpid(pid, 0)
+
+    if os.WIFEXITED(status) and os.WEXITSTATUS(status) == 0:
+        try:
+            return pickle.loads(data)
+        except Exception:
+            pass
+    print(f"[qdrant-index] Skipped (parser crashed): {filepath}", file=sys.stderr)
+    return []
+
+
+def _parse_file_unsafe(filepath: str, language: str) -> list[dict]:
     """Parse a file with tree-sitter and extract code chunks."""
     try:
         from tree_sitter_languages import get_language, get_parser
@@ -433,10 +469,14 @@ def write_opencode_config(repo_root: str, collection_name: str):
     if "mcp" not in config or not isinstance(config.get("mcp"), dict):
         config["mcp"] = {}
 
-    config["mcp"]["qdrant"] = {
+    servers = config["mcp"].get("servers")
+    if not isinstance(servers, dict):
+        servers = {}
+        config["mcp"]["servers"] = servers
+
+    servers["qdrant"] = {
         "type": "local",
-        "command": ["uvx", "mcp-server-qdrant"],
-        "enabled": True,
+        "command": ["sh", "-lc", "exec uvx mcp-server-qdrant"],
         "environment": {
             "QDRANT_URL": "http://localhost:6333",
             "COLLECTION_NAME": collection_name,
