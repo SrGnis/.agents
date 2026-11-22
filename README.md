@@ -18,9 +18,11 @@ This repository provides:
 ├── agents/              # Agent definitions (YAML frontmatter + markdown)
 │   └── ask.md           # Read-only code analyst and research assistant
 ├── commands/            # Custom slash commands
-│   └── index.md         # /index — index codebase into Qdrant
-├── skills/              # Skill definitions loaded by agents at runtime
-│   ├── arc42/           # 14 skills for arc42 architecture documentation
+│   ├── index.md         # /index — index codebase into Qdrant
+│   └── init_arc42.md    # /init_arc42 — install arc42 skills into a project
+├── bundles/             # Optional skill bundles, installed per project
+│   └── arc42/           # arc42 skills + installer (not loaded globally)
+├── skills/              # Always-on skill definitions
 │   ├── crawl4ai/        # Web scraping via Crawl4AI (symlink from tool)
 │   ├── qdrant/          # Semantic code search via Qdrant (symlink from tool)
 │   └── searxng/         # Web search via SearXNG (symlink from tool)
@@ -178,14 +180,24 @@ Skills are markdown files with YAML frontmatter that instruct agents how to use 
 | `searxng` | Web search, URL reading, autocomplete suggestions |
 | `crawl4ai` | JS-rendered scraping, screenshots, PDFs, JS execution |
 | `qdrant` | Semantic code search via vector embeddings |
-| `arc42-section-01` through `arc42-section-12` | Interactive arc42 architecture documentation |
-| `arc42-review` | Review arc42 sections for completeness and consistency |
-| `arc42-lint` | Cross-section ID consistency validation |
+
+Arc42 skills are shipped as an optional bundle — see below.
+
+### Optional Bundles
+
+Bundles are skill sets that are not loaded globally. Install one into a project when it is needed:
+
+| Bundle | Command | Skills |
+|--------|---------|--------|
+| `arc42` | `/init_arc42` | Sections 1-12, `arc42-review`, `arc42-lint` |
+
+The installer copies `bundles/arc42/skills/*` into `<project>/.opencode/skills/`. Options: `--link` (symlink, tracks `~/.agents`), `--force` (replace existing), `--remove`, `--dry-run`. Existing skills are skipped by default, so re-running is safe.
 
 ### Skill Sources
 
 - **Tool skills** — Defined in `tools/<name>/SKILL.md`, symlinked to `skills/<name>/` during installation
-- **Standalone skills** — Defined directly in `skills/` (e.g., arc42)
+- **Standalone skills** — Defined directly in `skills/`, always available
+- **Optional bundles** — Defined in `bundles/<name>/skills/`, installed per project via their command
 
 ## Agents
 
@@ -213,7 +225,7 @@ Contains:
 - **Security** — Never expose secrets or commit keys
 - **Verification** — Run lint/typecheck after changes
 - **Git** — Stage only intended files, match repo commit style
-- **Tool usage** — When and how to use SearXNG, Crawl4AI, Qdrant, and arc42 skills
+- **Tool usage** — When and how to use SearXNG, Crawl4AI, Qdrant, and the optional arc42 bundle (`/init_arc42`)
 - **Workflow** — SearXNG-first approach with Crawl4AI fallback, Qdrant for code search
 
 ## Configuration

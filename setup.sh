@@ -119,6 +119,7 @@ main() {
     link_agents_md
     link_agents
     link_command "index"
+    link_command "init_arc42"
     process_tool "searxng" "${SEARXNG_ENABLED:-false}"
     process_tool "crawl4ai" "${CRAWL4AI_ENABLED:-false}"
     process_tool "qdrant" "${QDRANT_ENABLED:-false}"

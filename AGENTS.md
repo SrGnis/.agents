@@ -82,15 +82,9 @@ Use Crawl4AI when SearXNG fails or for advanced web tasks. See the `crawl4ai` sk
 6. **Dynamic content** → Crawl4AI `crawl` with `crawler_config.wait_for`
 7. **Always** summarize in your own words — no raw dumps, no verbatim excerpts.
 
-### Architecture Documentation: arc42
+### Architecture Documentation: arc42 (optional)
 
-arc42 skills are available for documenting software architecture:
-
-- **Sections 1-12** — Interactive guided documentation for each arc42 section
-- **arc42-review** — Review sections for completeness and consistency
-- **arc42-lint** — Validate cross-section ID consistency
-
-Use when the user wants to create or review architecture documentation following the arc42 template.
+arc42 skills are not installed globally. When the user wants architecture documentation for a project, run `/init_arc42` to install the bundle into `.opencode/skills/` (sections 1-12, `arc42-review`, `arc42-lint`). Use the installed skills when the user wants to create or review architecture documentation following the arc42 template.
 
 ### GitLab: glab CLI
 
